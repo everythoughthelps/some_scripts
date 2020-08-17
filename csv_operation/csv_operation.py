@@ -33,11 +33,7 @@ def read_csv():
 
 def process(dir):
     for i in os.listdir(dir):
-        print(str(dir)+'/'+ str(i))
-        if os.path.isdir(str(dir)+'/'+ str(i)):
-            for j in os.listdir(str(dir) + '/' + str(i)):
-                if int(j.strip('jpgpng.')) % 3 !=0 :
-                    os.remove(os.path.join((str(dir) + '/' + str(i)),j))
+        print(str(i))
 
 def process_csv(dir):
     with open(dir, 'rt') as inp, open('first_edit.csv', 'w',newline='') as out:
@@ -49,8 +45,8 @@ def process_csv(dir):
                 writer.writerow([i,j])
 
 
-dir = '/data/nyuv2/data/nyu2_train.csv'
+dir = 'C:\\Users\\panmeng\\Pictures\\test_dir'
 
 
 if __name__ == '__main__':
-    process_csv(dir)
+    process(dir)

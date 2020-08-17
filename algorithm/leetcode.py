@@ -14,29 +14,32 @@ def lengthOfLongestSubstring( s: str) -> int:
         previous_length = max(current_length, previous_length)
     print(previous_length)
 
-def permutation(str,start,end):
+class permutation(object):
 
-    if(start==end):
-        for s in str:
-            print(s,end='')
-        print('')
-        return
+    def isrepeat(self,str,start,i):
+        bcan=True
+        #第i个字符与第j个字符交换时，要求[i,j)中没有与第j个字符相等的数
+        for j in range(start, i):
+            if str[start]==str[i]:
+                bcan=False
+                break
+        return bcan
 
-    for i in range(start,end+1):
-        if not isrepeat(str,start,i):
-            continue
-        str[start],str[i]=str[i],str[start]
-        permutation(str,start+1,end)
-        str[start], str[i] = str[i], str[start]
+    def permutation(self,str,start,end):
 
-def isrepeat(str,start,i):
-    bcan=True
-    #第i个字符与第j个字符交换时，要求[i,j)中没有与第j个字符相等的数
-    for j in range(start, i):
-        if str[start]==str[i]:
-            bcan=False
-            break
-    return bcan
+        if(start==end):
+            for s in str:
+                print(s,end='')
+            print('')
+            return
+
+        for i in range(start,end+1):
+            if not self.isrepeat(str,start,i):
+                continue
+            str[start],str[i]=str[i],str[start]
+            self.permutation(str,start+1,end)
+            str[start], str[i] = str[i], str[start]
+
 
 a=[1,2,3,4,4]
-permutation(a,1,3)
+permutation.permutation(a,1,3)
