@@ -41,5 +41,62 @@ class permutation(object):
             str[start], str[i] = str[i], str[start]
 
 
-a=[1,2,3,4,4]
-permutation.permutation(a,1,3)
+class Solution:
+
+
+    def longestPalindrome(self, s: str) -> str:
+        '''''''''
+        longest_str = ''
+        max_length = 0
+        if not s:
+            longest_str = ''
+        for i in range(len(s)):
+            for j in range(i + 1, len(s) + 1):
+                if s[i:j] == s[i:j][::-1]:
+                    if len(s[i:j]) > max_length:
+                        max_length = len(s[i:j])
+                        longest_str = s[i:j]
+        '''''
+        left ,right = 0,0
+        odd_length = 0
+        even_length = 0
+        max_length = 0
+        for i in range(len(s)):
+            L , R = i , i
+            while  L >= 0 and R < len(s) and s[L] == s[R]:
+                L = L - 1
+                R = R + 1
+            odd_length = R - L - 1
+            l , r = i , i
+            while l >= 0 and r + 1 <len(s) and s[l] == s[r + 1]:
+                l = l - 1
+                r = r + 1
+            even_length = r - l
+            max_length = max(odd_length,even_length)
+            if max_length > right - left:
+                left = i - (max_length-1)// 2
+                right = i + max_length // 2
+        print(s[left:right + 1])
+        return s[left:right]
+
+row = int(input())
+lines_multrows = []
+for n in range(row):    #没有n 用while true 也ok
+    line = input()
+    if line=='':
+        break
+    lines = line.split()
+    lines = list(map(int,lines))
+    lines_multrows.append(lines) #多行数组
+
+new_list = dict()
+
+for i, x in enumerate(lines_multrows):
+    if x[0] in new_list:
+        new_list[x[0]] = new_list[x[0]] + x[1]
+    else:
+        new_list[x[0]] = x[1]
+for i,x in enumerate(lines_multrows):
+    print(int(x),int(new_list[x]))
+
+
