@@ -3,7 +3,9 @@ a = [1,2,3]
 b = a
 
 def test_id_changeable(x):
-	x.pop()
+	print(hex(id(x)))
+	x.append(1)
+	print(sys.getsizeof(x))
 	print(x)
 	print(hex(id(x)))
 	x = [1,2]
@@ -17,10 +19,7 @@ def test_id_unchangeable(x):
 	x = x + 1
 	print(x)
 	print(hex(id(x)))
-
-print(hex(id(p)))
-print(hex(id(q)))
-test_id_unchangeable(p)
-print(hex(id(q)))
-print(q)
+print(sys.getsizeof(a))
+print(sys.getsizeof(b))
+test_id_changeable(a)
 
