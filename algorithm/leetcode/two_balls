@@ -1,0 +1,55 @@
+T = input() # 总共有多少组小球
+while 1:
+    try:
+        n = int(input()) # 小球个数
+        x = list(map(int, input().split())) # 小球的x属性
+        y = list(map(int, input().split())) # 小球的y属性
+
+        def test(n, x, y):
+            if n == 0:
+                print(0)
+                return
+            if n == 1:
+                print(1)
+                return
+
+            # def SelectionSort(x, y):
+            #     """将小球按属性x递增排序"""
+            #     for i in range(n-1):
+            #         idx = i
+            #         for j in range(i+1, n):
+            #             if x[j] < x[idx]:
+            #                 idx = j
+            #         x[i], x[idx] = x[idx], x[i]
+            #         y[i], y[idx] = y[idx], y[i]
+            # SelectionSort(x, y) # 首先将小球按x排序
+            x, y = zip(*sorted(list(zip(x, y)), key=lambda item: item[0]))
+            print(x)
+            print(y)
+
+
+            # 下面求y的最长递增子序列，长度即为最终结果
+
+            # 法一：将其转化为求sorted(y)和y的最长公共子序列长度的问题
+            # def LCS(x, y):
+            #     dp = [[0 for j in range(len(y)+1)] for i in range(len(x)+1)]
+            #     for i in range(1, len(y)+1):
+            #         for j in range(1, len(x)+1):
+            #             if y[i-1] == x[j-1]:
+            #                 dp[i][j] = dp[i-1][j-1] + 1
+            #             else:
+            #                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+            #     return dp[len(y)][len(x)]
+            # print(LCS(y, sorted(y)))
+
+            # 法二：直接用动态规划算法求y的最长递增子序列
+            def dp_test(y, n):
+                dp = [1 for i in range(n)]
+                for i in range(1, n):
+                    dp[i] = max([dp[j] for j in range(i) if y[i] > y[j]]) + 1
+                return dp[n-1]
+            print(dp_test(y, n))
+
+        test(n, x, y)
+    except:
+        break
