@@ -15,7 +15,6 @@ while True:
             m_fac = factorial(m)
             diff_fac = factorial(n - m)
             return n_fac / (m_fac * diff_fac)
-
         sum = 0
 
         for i in range(3,n):
