@@ -52,8 +52,8 @@ def seabron_func(weight,our_weight):
 	plt.show()
 
 def imshow_fun(weight,our_weight):
-	flatten_weight = torch.flatten(weight, start_dim=2).squeeze()
-	our_flatten_weight = torch.flatten(our_weight, start_dim=2).squeeze()
+	flatten_weight = torch.flatten(weight, start_dim=1)
+	our_flatten_weight = torch.flatten(our_weight, start_dim=1)
 
 	matrix_co = np.corrcoef(flatten_weight.cpu())
 	our_matrix_co = np.corrcoef(our_flatten_weight.cpu())
@@ -91,7 +91,7 @@ def imshow_fun(weight,our_weight):
 
 class plt_hist(object):
 	def __init__(self,rows,clos):
-		self.fig, self.axs = plt.subplots(nrows=rows, ncols=clos, figsize=(12, 4))
+		self.fig, self.axs = plt.subplots(nrows=rows, ncols=clos, figsize=(16, 4))
 
 	def histgram(self, mat_x, axe, mat_y=None):
 		if mat_y is not None:
@@ -104,8 +104,78 @@ class plt_hist(object):
 		mask = np.zeros_like(matrix_co)
 		mask[np.triu_indices_from(mask)] = True
 		matrix_co_tridown = np.ma.masked_where(mask, matrix_co)
+		axe.set_xticklabels(labels = ['0','-0.5','0.0','0.5','1.0'], fontdict={'size':8,'family':'serif'})
+		axe.set_yticks(range(0,13000,2000))
+		axe.set_yticklabels(labels = ['0','2000','4000','6000','8000','10000','12000'], fontdict={'size':8,'family':'serif'})
+		axe.spines['right'].set_visible(False)
+		axe.spines['top'].set_visible(False)
+		#axe.spines['bottom'].set_visible(False)
+		#axe.spines['left'].set_visible(False)
+		axe.grid(True,linestyle='--',alpha = 0.4,axis = 'y')
 		axe.hist(matrix_co_tridown.ravel(),bins=20)
 
+	def imshow_fun(self,weight,axe,our_weight=None):
+		if our_weight is not None:
+			flatten_weight = torch.flatten(weight, start_dim=1)
+			our_flatten_weight = torch.flatten(our_weight, start_dim=1)
+
+			matrix_co = np.corrcoef(flatten_weight.cpu(),our_flatten_weight.cpu())
+		else:
+			flatten_weight = torch.flatten(weight, start_dim=1)
+			matrix_co = np.corrcoef(flatten_weight.cpu())
+
+		mask = np.zeros_like(matrix_co)
+		mask[np.triu_indices_from(mask)] = True
+		matrix_co_tridown = np.ma.masked_where(mask,matrix_co)
+
+		axe.spines['right'].set_visible(False)
+		axe.spines['top'].set_visible(False)
+		axe.spines['bottom'].set_visible(False)
+		axe.spines['left'].set_visible(False)
+		axe.imshow(matrix_co_tridown, cmap='jet')
+
+	def hot_mul2one(self,weight,our_weight,axe):
+		flatten_weight = torch.flatten(weight, start_dim=1)
+		our_flatten_weight = torch.flatten(our_weight, start_dim=1)
+
+		matrix_co = np.corrcoef(flatten_weight.cpu())
+		our_matrix_co = np.corrcoef(our_flatten_weight.cpu())
+		mask = np.zeros_like(matrix_co)
+		mask[np.triu_indices_from(mask)] = True
+		matrix_co_tridown = np.ma.masked_where(mask,matrix_co)
+		our_matrix_co_tridown = np.ma.masked_where(mask,our_matrix_co)
+		vmax = max(our_matrix_co_tridown.max(),matrix_co_tridown.max())
+		vmin = min(our_matrix_co_tridown.min(),matrix_co_tridown.min())
+
+		axe[2].spines['right'].set_visible(False)
+		axe[2].spines['top'].set_visible(False)
+		axe[2].spines['bottom'].set_visible(False)
+		axe[2].spines['left'].set_visible(False)
+		axe[3].spines['right'].set_visible(False)
+		axe[3].spines['top'].set_visible(False)
+		axe[3].spines['bottom'].set_visible(False)
+		axe[3].spines['left'].set_visible(False)
+		axe[2].set_xticks(range(0,128,20))
+		axe[2].set_xticklabels(['0','20','40','60','80','100','120'],fontdict={'size':8,'family':'serif'})
+		axe[3].set_xticks(range(0,128,20))
+		axe[3].set_xticklabels(['0','20','40','60','80','100','120'],fontdict={'size':8,'family':'serif'})
+		axe[2].set_yticks(range(0,128,20))
+		axe[2].set_yticklabels(['0','20','40','60','80','100','120'],fontdict={'size':8,'family':'serif'})
+		axe[3].set_yticks(range(0,128,20))
+		axe[3].set_yticklabels(['0','20','40','60','80','100','120'],fontdict={'size':8,'family':'serif'})
+		sc0=axe[2].imshow(matrix_co_tridown, cmap='jet',vmax=vmax,vmin=vmin)
+		sc1=axe[3].imshow(our_matrix_co_tridown, cmap='jet',vmax=vmax,vmin=vmin)
+
+		self.fig.subplots_adjust(right=0.9)
+		# colorbar 左 下 宽 高
+		l = 0.92
+		b = 0.15
+		w = 0.015
+		h = 0.7
+		# 对应 l,b,w,h；设置colorbar位置；
+		rect = [l, b, w, h]
+		cbar_ax = self.fig.add_axes(rect)
+		plt.colorbar(sc0,cax=cbar_ax)
 
 def to_tensor(pic):
 	if isinstance(pic, np.ndarray):
@@ -162,8 +232,11 @@ our_nyu_feature_25 = test_feature(our_model_path,nyu_img_26,'nyu')
 kitti_feature_0 = test_feature(model_path,kitti_0,'kitti')
 our_kitti_feature_0 = test_feature(our_model_path,kitti_0,'kitti')
 
-a = plt_hist(1,2)
+a = plt_hist(1,4)
+a.axs[0].get_shared_y_axes().join(a.axs[0],a.axs[1])
 a.histgram(nyu_feature_25,a.axs[0],kitti_feature_0)
 a.histgram(our_nyu_feature_25,a.axs[1],our_kitti_feature_0)
-plt.savefig('hist_nyu.pdf', dpi=300, bbox_inches='tight')
+a.hot_mul2one(weight,our_weight,a.axs)
+
+plt.savefig('conv_co.pdf', dpi=300, bbox_inches='tight')
 plt.show()
