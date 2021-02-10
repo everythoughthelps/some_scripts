@@ -91,7 +91,7 @@ def imshow_fun(weight,our_weight):
 
 class plt_hist(object):
 	def __init__(self,rows,clos):
-		self.fig, self.axs = plt.subplots(nrows=rows, ncols=clos, figsize=(16, 4))
+		self.fig, self.axs = plt.subplots(nrows=rows, ncols=clos, figsize=(10, 4))
 
 	def histgram(self, mat_x, axe, mat_y=None):
 		if mat_y is not None:
@@ -104,15 +104,19 @@ class plt_hist(object):
 		mask = np.zeros_like(matrix_co)
 		mask[np.triu_indices_from(mask)] = True
 		matrix_co_tridown = np.ma.masked_where(mask, matrix_co)
-		axe.set_xticklabels(labels = ['0','-0.5','0.0','0.5','1.0'], fontdict={'size':8,'family':'serif'})
+		axe.set_xlabel('Pearson correlation coefficient')
+		axe.set_ylabel('number of elements')
+		axe.set_xticklabels(labels = ['0','-0.5','0.0','0.5','1.0'], fontdict={'size':8})
 		axe.set_yticks(range(0,13000,2000))
-		axe.set_yticklabels(labels = ['0','2000','4000','6000','8000','10000','12000'], fontdict={'size':8,'family':'serif'})
+		axe.set_yticklabels(labels = ['0','2000','4000','6000','8000','10000','12000'], fontdict={'size':8})
 		axe.spines['right'].set_visible(False)
 		axe.spines['top'].set_visible(False)
 		#axe.spines['bottom'].set_visible(False)
-		#axe.spines['left'].set_visible(False)
+		axe.spines['left'].set_visible(False)
 		axe.grid(True,linestyle='--',alpha = 0.4,axis = 'y')
-		axe.hist(matrix_co_tridown.ravel(),bins=20)
+		arr = axe.hist(matrix_co_tridown.ravel(),bins=20)
+		#for i in range(20):
+		#	axe.text(arr[1][i], arr[0][i], str(arr[0][i]))
 
 	def imshow_fun(self,weight,axe,our_weight=None):
 		if our_weight is not None:
@@ -147,35 +151,48 @@ class plt_hist(object):
 		vmax = max(our_matrix_co_tridown.max(),matrix_co_tridown.max())
 		vmin = min(our_matrix_co_tridown.min(),matrix_co_tridown.min())
 
-		axe[2].spines['right'].set_visible(False)
-		axe[2].spines['top'].set_visible(False)
-		axe[2].spines['bottom'].set_visible(False)
-		axe[2].spines['left'].set_visible(False)
-		axe[3].spines['right'].set_visible(False)
-		axe[3].spines['top'].set_visible(False)
-		axe[3].spines['bottom'].set_visible(False)
-		axe[3].spines['left'].set_visible(False)
-		axe[2].set_xticks(range(0,128,20))
-		axe[2].set_xticklabels(['0','20','40','60','80','100','120'],fontdict={'size':8,'family':'serif'})
-		axe[3].set_xticks(range(0,128,20))
-		axe[3].set_xticklabels(['0','20','40','60','80','100','120'],fontdict={'size':8,'family':'serif'})
-		axe[2].set_yticks(range(0,128,20))
-		axe[2].set_yticklabels(['0','20','40','60','80','100','120'],fontdict={'size':8,'family':'serif'})
-		axe[3].set_yticks(range(0,128,20))
-		axe[3].set_yticklabels(['0','20','40','60','80','100','120'],fontdict={'size':8,'family':'serif'})
-		sc0=axe[2].imshow(matrix_co_tridown, cmap='jet',vmax=vmax,vmin=vmin)
-		sc1=axe[3].imshow(our_matrix_co_tridown, cmap='jet',vmax=vmax,vmin=vmin)
+		axe[0].spines['right'].set_visible(False)
+		axe[0].spines['top'].set_visible(False)
+		axe[0].spines['bottom'].set_visible(False)
+		axe[0].spines['left'].set_visible(False)
+		axe[1].spines['right'].set_visible(False)
+		axe[1].spines['top'].set_visible(False)
+		axe[1].spines['bottom'].set_visible(False)
+		axe[1].spines['left'].set_visible(False)
+		axe[0].set_xlabel('filter index')
+		axe[0].set_ylabel('filter index')
+		axe[1].set_xlabel('filter index')
+		axe[1].set_ylabel('filter index')
+		axe[0].set_xticks(range(0,128,20))
+		axe[0].set_xticklabels(['0','20','40','60','80','100','120'],fontdict={'size':8})
+		axe[1].set_xticks(range(0,128,20))
+		axe[1].set_xticklabels(['0','20','40','60','80','100','120'],fontdict={'size':8})
+		axe[0].set_yticks(range(0,128,20))
+		axe[0].set_yticklabels(['0','20','40','60','80','100','120'],fontdict={'size':8})
+		axe[1].set_yticks(range(0,128,20))
+		axe[1].set_yticklabels(['0','20','40','60','80','100','120'],fontdict={'size':8})
+		axe[0].set_title('(a)',y=-0.2,fontsize=10)
+		axe[1].set_title('(b)',y=-0.2,fontsize=10)
+		sc0=axe[0].imshow(matrix_co_tridown, cmap='jet',vmax=vmax,vmin=vmin)
+		sc1=axe[1].imshow(our_matrix_co_tridown, cmap='jet',vmax=vmax,vmin=vmin)
 
 		self.fig.subplots_adjust(right=0.9)
 		# colorbar 左 下 宽 高
 		l = 0.92
 		b = 0.15
-		w = 0.015
+		w = 0.01
 		h = 0.7
 		# 对应 l,b,w,h；设置colorbar位置；
 		rect = [l, b, w, h]
 		cbar_ax = self.fig.add_axes(rect)
-		plt.colorbar(sc0,cax=cbar_ax)
+		cb = plt.colorbar(sc0,cax=cbar_ax)
+		cb.ax.tick_params(labelsize=8)
+		font = {#'family': 'serif',
+				#'color': 'darkred',
+				#'weight': 'normal',
+				'size': 10,
+				}
+		cb.set_label('Cosine', fontdict=font)  # 设置colorbar的标签字体及其大小
 
 def to_tensor(pic):
 	if isinstance(pic, np.ndarray):
@@ -232,11 +249,19 @@ our_nyu_feature_25 = test_feature(our_model_path,nyu_img_26,'nyu')
 kitti_feature_0 = test_feature(model_path,kitti_0,'kitti')
 our_kitti_feature_0 = test_feature(our_model_path,kitti_0,'kitti')
 
-a = plt_hist(1,4)
-a.axs[0].get_shared_y_axes().join(a.axs[0],a.axs[1])
-a.histgram(nyu_feature_25,a.axs[0],kitti_feature_0)
-a.histgram(our_nyu_feature_25,a.axs[1],our_kitti_feature_0)
+a = plt_hist(1,2)
 a.hot_mul2one(weight,our_weight,a.axs)
-
 plt.savefig('conv_co.pdf', dpi=300, bbox_inches='tight')
 plt.show()
+'''
+a = plt_hist(1,2)
+a.axs[0].get_shared_y_axes().join(a.axs[0],a.axs[1])
+a.axs[0].get_shared_x_axes().join(a.axs[0],a.axs[1])
+a.histgram(nyu_feature_25,a.axs[0],kitti_feature_0)
+a.histgram(our_nyu_feature_25,a.axs[1],our_kitti_feature_0)
+a.axs[0].set_title('(a)', y=-0.2, fontsize=10)
+a.axs[1].set_title('(b)', y=-0.2, fontsize=10)
+
+plt.savefig('fea_co.pdf', dpi=300, bbox_inches='tight')
+plt.show()
+'''
